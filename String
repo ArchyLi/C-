@@ -1,0 +1,117 @@
+class String  
+{  
+    friend ostream& operator<<(ostream& os, String& s);  
+    friend istream& operator>>(istream& is, String& s);  
+public:  
+    String(char *str="")  
+        :_sz(strlen(str))  
+        , _capacity(strlen(str)+1)  
+        ,_str(new char [strlen(str)+1])  
+    {  
+        cout << "String()" << endl;  
+        strcpy(_str,str);  
+    }  
+  
+    String(const String& s)  
+        :_sz(strlen(s._str))  
+        , _capacity(strlen(s._str) + 1)  
+        ,_str(new char [strlen(s._str)+1])  
+    {  
+        cout << "String(const String&)" << endl;  
+        strcpy(_str,s._str);  
+    }  
+  
+    String& operator=(String s)  
+    {  
+        _sz = s._sz;  
+        _capacity = s._capacity;  
+        swap(_str,s._str);  
+        return *this;  
+    }  
+  
+    //String& operator=(const String& s)  
+    //{  
+    //    
+    //  if (_str != s._str)  
+    //  {  
+    //      cout << "String& operator=" << endl;  
+    //      delete[] _str;  
+    //      _str = new char[strlen(s._str) + 1];  
+    //      strcpy(_str, s._str);  
+    //  }  
+    //  return *this;  
+    //}  
+  
+    ~String()  
+    {  
+        cout << "~String()" << endl;  
+        delete[] _str;  
+        _str = NULL;  
+        _sz = 0;  
+        _capacity = 0;  
+    }  
+public:  
+    char* C_str()const  
+    {  
+        return _str;  
+    }  
+  
+    void PushBack(char c)                            //尾插一个字符  
+    {  
+        GetCapacity(1);  
+        _str[_sz++] = c;  
+        _str[_sz] = '\0';  
+    }  
+  
+    String& Insert(int posl, const String& s)          //在指定位置插入一个字符串  
+    {  
+        int count = strlen(s._str);  
+        if (posl<=_sz)                              //如果插入的位置在字符串结束之后，则不插入  
+        {  
+            GetCapacity(count);  
+            int j = _sz + count;  
+            for (int i = _sz; i >= posl; i--, j--)  
+            {  
+                _str[j] = _str[i];  
+            }  
+            strncpy(_str + posl, s._str, count);  
+        }  
+        _sz += count;  
+        return *this;  
+    }  
+  
+    char& operator[](size_t posl)  
+    {  
+        return _str[posl];  
+    }  
+private:  
+    void GetCapacity(int count)                    //得到扩容后的空间  
+    {  
+        if ((_sz+count) >= _capacity)               //如果总的字符数大于或等于容量，则扩容  
+        {  
+            int NewCapacity = (2 * _capacity) > (_capacity + count) ?  
+                (2 * _capacity) : (_capacity + count);  
+            char *tmp = new char[NewCapacity];  
+            strcpy(tmp, _str);  
+            delete[] _str;  
+            _str = tmp;  
+            _capacity = NewCapacity;  
+        }  
+    }  
+private:  
+    char *_str;  
+    int _sz;                             //标记字符的个数  
+    int _capacity;                       //标记容量  
+};  
+  
+ostream& operator<<(ostream& os, String& s)  
+{  
+    os<< s._str;  
+    return os;  
+}  
+  
+istream& operator>>(istream& is, String& s)  
+{  
+    is >> s._str;  
+    return is;  
+}  
