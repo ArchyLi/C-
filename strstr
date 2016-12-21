@@ -1,0 +1,43 @@
+#include<stdio.h>  
+#include<string.h>  
+  
+char* my_strstr(const char *dest, const char *src)    
+{  
+    const char *pdest = dest;  
+    char *s1, *s2;  
+    if (!(*src))        //如果传进来空字符串则返回源字符串  
+    {  
+        return (char *)dest;  
+    }  
+    while (*pdest)  
+    {  
+        s1 = (char *)pdest;  
+        s2 = (char *)src;  
+        while ((*s1) && (*s2)&&(*s1 == *s2))  //从第一个字符相等的地方使指针向后移  
+        {  
+            s1++;  
+            s2++;  
+        }  
+        if (*s2 == '\0')    
+        {  
+            return (char *)pdest;  
+        }  
+        pdest++;  
+    }  
+    return NULL;  
+}  
+  
+int main()  
+{  
+    char* ret=my_strstr("student", "den");  
+    if (ret != NULL)  
+    {  
+        printf("%s", ret);  
+    }  
+    else  
+    {  
+        printf("false");  
+    }  
+    getchar();  
+    return 0;  
+}  
