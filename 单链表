@@ -1,0 +1,472 @@
+#ifndef __LINKLIST_H__  
+#define __LINKLIST_H__  
+#define _CRT_SECURE_NO_WARNINGS 1  
+#include<stdio.h>  
+#include <assert.h>  
+#include<stdlib.h>  
+typedef int DataType;  
+enum OP  
+{  
+    EXIT,  
+    PUSHBACK,  
+    POPBACK,  
+    PUSHFRONT,  
+    POPFRONT,  
+    PRINT,  
+    INSERT,  
+    REMOVE,  
+    REMOVEALL,  
+    ERASE,  
+    SORT  
+};  
+typedef struct LinkNode  
+{  
+    DataType data;  
+    struct LinkNode *next;  
+}LinkNode,*pLinkNode;  
+typedef struct LinkList  
+{  
+    LinkNode *pHead;  
+}LinkList,*pLinkList;  
+void InitLinkList(pLinkList pList);  
+void DestroyLinkList(pLinkList pList);  
+void PushBackLinkList(pLinkList pList,DataType x);  
+void PopBackLinkList(pLinkList pList);  
+void PushFrontLinkList(pLinkList pList, DataType x);  
+void PopFrontLinkList(pLinkList pList);  
+void PrintLinkList(pLinkList pList);  
+void InsertLinkList(pLinkList pList, DataType x, pLinkNode pos);  
+void Remove(pLinkList pList, DataType x);  
+void RemoveAll(pLinkList pList, DataType x);  
+void Erase(pLinkList pList, pLinkNode pos);  
+void BottleSort(pLinkList pList);  
+void menu();  
+#endif//__LINKLIST_H__  
+  
+  
+//LinkList.c  
+#include"LinkList.h"  
+pLinkNode CreatNode(DataType x)  
+{  
+    pLinkNode p = (pLinkNode)malloc(sizeof(LinkNode));  
+    if (NULL == p)  
+    {  
+        printf("out of memory.\n");  
+        exit(EXIT_FAILURE);  
+    }  
+    p->data = x;  
+    return p;  
+}  
+pLinkNode find(pLinkList pList,DataType x)  
+{  
+    assert(pList);  
+    pLinkNode tmp = pList->pHead;  
+    if (pList->pHead == NULL)  
+    {  
+        printf("pList is empty.\n");  
+    }  
+    while (tmp->data != x)  
+    {  
+        tmp = tmp->next;  
+    }  
+    return tmp;  
+}  
+void InitLinkList(pLinkList pList)  
+{  
+    assert(pList);  
+    pList ->pHead = NULL;  
+}  
+void DestroyLinkList(pLinkList pList)  
+{  
+    assert(pList);  
+    pLinkNode p = pList->pHead;  
+    pLinkNode del = NULL;  
+    if (NULL == pList->pHead)  
+    {  
+        printf("linklist is empty.\n");  
+        return;  
+    }  
+    while (p)  
+    {  
+        pList->pHead = p->next;  
+        free(p);  
+        p = pList->pHead;  
+    }  
+    pList->pHead = NULL;  
+}  
+void PushBackLinkList(pLinkList pList, DataType x)  
+{  
+    assert(pList);  
+    pLinkNode  add = CreatNode(x);  
+    pLinkNode tmp = pList->pHead;  
+    if (NULL == pList->pHead)//linklist is empty  
+    {  
+        pList->pHead = add;  
+        add->next = NULL;  
+        return;  
+    }  
+    while (tmp->next)//linklist is not empty  
+    {  
+        tmp = tmp->next;  
+    }  
+    tmp->next = add;  
+    add->next = NULL;  
+    printf("successful  push back\n");  
+}  
+void PopBackLinkList(pLinkList pList)  
+{  
+    assert(pList);  
+    if (NULL == pList->pHead)  
+    {  
+        printf("linklist is empty.\n");  
+        return;  
+    }  
+    pLinkNode cur = pList->pHead;  
+    pLinkNode prev = pList->pHead;  
+    if (NULL == cur->next->next)//linklist only has an element.  
+    {  
+        free(cur->next);  
+        cur->next = NULL;  
+    }  
+    else  
+    {  
+        while (cur->next)  
+        {  
+            prev = cur;  
+            cur = cur->next;  
+        }  
+        free(prev ->next);  
+        prev->next = NULL;  
+    }  
+    printf("successful popback");  
+}  
+void PushFrontLinkList(pLinkList pList, DataType x)  
+{  
+    assert(pList);  
+    pLinkNode  add = CreatNode(x);  
+    pLinkNode tmp = pList->pHead;  
+    if (NULL == pList->pHead)//linklist is empty  
+    {  
+        pList->pHead = add;  
+        add->next = NULL;  
+        return;  
+    }  
+    add->next = tmp;  
+    pList->pHead = add;  
+    printf("successful pushfront.\n");  
+}  
+void PopFrontLinkList(pLinkList pList)  
+{  
+    assert(pList);  
+    if (NULL == pList->pHead)  
+    {  
+        printf("linklist is empty.\n");  
+        return;  
+    }  
+    pLinkNode tmp = pList->pHead;  
+    pLinkNode del = pList->pHead;  
+    if (NULL == tmp->next->next)  
+    {  
+        free(tmp->next);  
+        pList->pHead = NULL;  
+    }  
+    else  
+    {  
+        del = tmp->next;  
+        tmp = tmp->next->next;  
+        free(del);  
+    }  
+    printf("successful popfront.\n");  
+}  
+void PrintLinkList(pLinkList pList)  
+{  
+    assert(pList);  
+    if (NULL == pList->pHead)  
+    {  
+        printf("linklist is empty.\n");  
+        return;  
+    }  
+    pLinkNode tmp = pList->pHead;  
+    while (tmp)  
+    {  
+        printf("%d->",tmp->data);  
+        tmp = tmp->next;  
+    }  
+    printf("over\n");  
+}  
+void InsertLinkList(pLinkList pList, DataType x, pLinkNode pos)//insert the front of pos  
+{  
+    assert(pList);  
+    pLinkNode p = CreatNode(x);  
+    pLinkNode tmp = pList->pHead;  
+    if (NULL == pList->pHead)//check:if linklist is empty,we insert the element in the linklist.  
+    {  
+        tmp->next = p;  
+        p->next = NULL;  
+        return;  
+    }  
+    if (pos == pList->pHead->next)  
+    {  
+        PushFrontLinkList(pList, x);  
+        return;  
+    }  
+    while (tmp->next  != pos)  
+    {  
+        tmp = tmp->next;  
+    }  
+    p->next = tmp->next;  
+    tmp->next = p;  
+    printf("successful insertion.\n");  
+}  
+void Remove(pLinkList pList, DataType x)  
+{  
+    assert(pList);  
+    pLinkNode cur = pList->pHead;  
+    pLinkNode del = pList->pHead;  
+    pLinkNode prev = pList->pHead;  
+    if (NULL == pList->pHead)  
+    {  
+        printf("linklist is empty.\n");  
+        return;  
+    }  
+    if (cur->next == NULL)//只有一个元素  
+    {  
+        if (cur->data == x)  
+        {  
+            free(cur->next);  
+            pList->pHead = NULL;  
+            return;  
+        }  
+    }  
+    else  
+    {  
+        while (cur != NULL)  
+        {  
+            if (cur->data == x)  
+            {  
+                del = cur;  
+                pList->pHead = cur->next;  
+                free(del);  
+                return;  
+            }  
+            cur = cur->next;  
+            while (cur != NULL)  
+            {  
+                if (cur->data == x)  
+                {  
+                    prev->next = cur->next;  
+                    free(cur);  
+                    return;  
+                }  
+                prev = cur;  
+                cur = cur->next;  
+            }  
+        }  
+    }  
+    printf("successful remove.\n");  
+}  
+void RemoveAll(pLinkList pList, DataType x)  
+{  
+    assert(pList);  
+    if (NULL == pList->pHead)  
+    {  
+        printf("linklist is empty.\n");  
+        return;  
+    }  
+    pLinkNode cur = pList->pHead;  
+    pLinkNode prev = pList->pHead;  
+      
+    while (cur != NULL)      //判断第一个结点  
+    {  
+        if (cur->next == NULL)    //linklist has one element.  
+        {  
+            if (cur->data == x)  
+            {  
+                free(cur->next);  
+                pList->pHead = NULL;  
+                return;  
+            }  
+        }  
+        else if (pList->pHead->data == x) //如果不是一个结点，且第一个结点的数据是x         
+        {  
+            pList->pHead = cur->next;  
+            free(cur);  
+            cur = pList->pHead;  
+        }  
+        else  
+            break;  
+    }  
+    cur = cur->next;  
+    prev = pList->pHead;  
+    while (cur)  
+    {  
+        if (cur->data == x)  
+        {  
+            prev->next = cur->next;             
+            free(cur);  
+            cur = prev;  
+        }  
+        prev = cur;  
+        cur = cur->next;  
+    }  
+    printf("successful removeall.\n");  
+}  
+  
+void Erase(pLinkList pList, pLinkNode pos)  
+{  
+    assert(pList);  
+    if (NULL == pList->pHead)  
+    {  
+        printf("linklist is empty.\n");  
+        return;  
+    }  
+    pLinkNode cur = pList->pHead;  
+    pLinkNode del = pList->pHead;  
+    pLinkNode prev = pList->pHead;  
+    if (cur->next == NULL)//如果只有一个元素  
+    {  
+        if (pos == cur)  
+        {                       //第一个结点就是pos位置  
+            free(pList->pHead);  
+            pList->pHead = NULL;  
+        }  
+        return;  
+    }  
+    if (pos == cur)  
+    {                       //第一个结点就是pos位置  
+        del = cur;  
+        pList->pHead = cur->next;  
+        free(del);  
+        return;  
+    }  
+    cur = cur->next;  
+    while(cur)  
+    {   
+        if(cur == pos)  
+        {  
+            prev->next = cur->next;  
+            free(cur);  
+            return;  
+        }  
+        prev = cur;  
+        cur = cur->next;  
+    }  
+}  
+void BottleSort(pLinkList pList)  
+{  
+    assert(pList);  
+    if (NULL == pList->pHead || NULL == pList -> pHead->next )  
+    {  
+        printf("linklist is empty or linklist has one element.\n");  
+        return;  
+    }  
+    pLinkNode front = pList->pHead;  
+    pLinkNode tail = NULL;  
+    while (front != tail)  
+    {  
+        while (front->next != tail)  
+        {  
+            if (front->data > front->next->data)  
+            {  
+                DataType tmp = front->data;  
+                front->data = front->next->data;  
+                front->next->data = tmp;  
+            }  
+            front = front->next;  
+        }  
+        tail = front;  
+        front = pList->pHead;  
+    }  
+}  
+void menu()  
+{  
+    printf("*********1.尾插***************\n");  
+    printf("*********2.尾删***************\n");  
+    printf("*********3.头插***************\n");  
+    printf("*********4.头删***************\n");  
+    printf("*********5.打印***************\n");  
+    printf("*********6.插入***************\n");  
+    printf("*********7.删除指定元素********\n");  
+    printf("*********8.删除指定的全部*******\n");  
+    printf("*********9.删除指定位置的元素***\n");  
+    printf("*********10.排序****************\n");  
+    printf("*********0.退出*******\n");  
+}  
+  
+  
+  
+//test.c  
+#include"LinkList.h"  
+void test()  
+{  
+    LinkList list;  
+    pLinkNode pos = NULL;  
+    InitLinkList(&list);  
+    int input = 1;  
+    DataType x = 0;  
+    DataType y = 0;  
+    while (input)  
+    {  
+        menu();  
+        printf("please your choice:>");  
+        scanf("%d",&input);  
+        switch (input)  
+        {  
+        case EXIT:  
+            DestroyLinkList(&list);  
+            break;  
+        case PUSHBACK:  
+            printf("please input a number of insertion:>");  
+            scanf("%d",&x);  
+            PushBackLinkList(&list, x);  
+            break;  
+        case POPBACK:  
+            PopBackLinkList(&list);  
+            break;  
+        case PUSHFRONT:  
+            printf("please input a number of insertion:>");  
+            scanf("%d", &x);  
+            PushFrontLinkList(&list, x);  
+            break;  
+        case POPFRONT:  
+            PopFrontLinkList(&list);  
+            break;  
+        case PRINT:  
+            PrintLinkList(&list);  
+            break;  
+        case REMOVE:  
+            printf("please input a number of delete:>");  
+            scanf("%d", &x);  
+            Remove(&list, x);  
+            break;  
+        case REMOVEALL:  
+            printf("please input a number of delete:>");  
+            scanf("%d", &x);  
+            RemoveAll(&list, x);  
+            break;  
+        case ERASE:  
+            printf("please input a number of delete:>");  
+            scanf("%d", &x);  
+            pos = find(&list,x);  
+            Erase(&list, pos);  
+            break;  
+        case SORT:  
+            BottleSort(&list);  
+            break;  
+        case INSERT:  
+            printf("please input a number of insertion:>");  
+            scanf("%d", &x);  
+            printf("please input a number of the data of pos:>");  
+            scanf("%d", &y);  
+            pos = find(&list, y);  
+            InsertLinkList(&list, x, pos);  
+            break;  
+        }  
+    }  
+}  
+int main()  
+{  
+    test();  
+    system("pause");  
+    return 0;  
+}  
