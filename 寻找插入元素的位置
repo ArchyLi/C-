@@ -1,0 +1,65 @@
+#include<stdio.h>  
+#include<malloc.h>  
+#include<assert.h>  
+  
+int findInsertPos(int arr[], int num, int target)  
+{  
+    assert(arr);  
+    if (num <= 0)  
+    {  
+        printf("元素个数错误");  
+        return -1;;  
+    }  
+    int left = 0;  
+    int right = num - 1;  
+    int i = 0;  
+    int minIndex = 0;  
+    while (left <= right)  
+    {  
+        int middle = (left & right) + ((left | right) >> 1);  
+        if (arr[middle] == target)  
+        {  
+            return middle;  
+        }  
+        else if (arr[middle] < target)  
+        {  
+            left = middle + 1;  
+        }  
+        else  
+        {  
+            right = middle - 1;  
+        }  
+    }  
+    for (i = 0; i < num; i++)  
+    {  
+        if (target < arr[i])  
+            return i;  
+    }  
+}  
+int main()  
+{  
+    int num = 0;  
+    int i = 0;  
+    int target = 0;  
+    int *arr = NULL;  
+    scanf("%d",&num);  
+    if(num > 0)  
+    {  
+        arr = (int *)malloc(num*sizeof(int));  
+        if (NULL == arr)  
+        {  
+            printf("out of memory.");  
+        }  
+    }  
+    else   
+        return;  
+    for (i = 0;i < num; i++)  
+    {  
+        scanf("%d",arr+i);  
+    }  
+    scanf("%d",&target);  
+    int ret = findInsertPos(arr,num,target);  
+    printf("%d",ret);  
+    free(arr);  
+    arr = NULL;  
+    return 0;  
