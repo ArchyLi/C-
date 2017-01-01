@@ -1,0 +1,27 @@
+# include <stdio.h>    
+# include <stdlib.h>    
+# include <math.h>    
+  
+int main()  
+{  
+    int num = 0;  
+    int sum = 0;  
+    int temp = 0;  
+    int ret = 0;  
+  
+  
+    printf("please input one number\n");  
+    scanf_s("%d", &num);  
+    for (int b = 0; b < 32; ++b)  
+    {  
+        temp = ((num >> b) & 1);      /*利用位运算依次获取二进制最低位*/  
+        ret = ((ret << 1) | temp);      /*利用位运算较为高效的进行对翻转形式的数值转化*/  
+    }  
+        //sum += pow((float)2, (31 - b)) * temp;   /*cpp中pow函数有类型的问题，所以对pow(x,y)中的x进行类型（double也行）强转；此外求和还可以利用位运算优化*/  
+  
+      
+  
+    printf("\n");  
+    printf("%u\n", ret);   /*一定是无符号输出 否则会超出有符号的最大值*/  
+    return 0;  
+}  
