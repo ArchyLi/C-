@@ -1,0 +1,22 @@
+void DelNotTailNode(PSListNode pos)
+{
+    PSListNode pNode = NULL;
+    assert(pos);
+    if (NULL == pos->pNextNode)
+    {
+        return;
+    }
+
+    else
+    {
+        DataType temp = 0;
+        //交换pos和pos->pNextNode的数据（相当于交换了两个结点的位置），使问题转换为删除pos指向的结点的下一个结点
+        temp = pos->data;
+        pos->data = pos->pNextNode->data;
+        pos->pNextNode->data = temp;
+        pNode = pos->pNextNode;
+        pos->pNextNode = pos->pNextNode->pNextNode;
+        free(pNode);
+        pNode = NULL;
+    }
+}
