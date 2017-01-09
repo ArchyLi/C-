@@ -1,0 +1,57 @@
+////逆置链表：方法一：前插法
+//void ReverseList(PSListNode* pHead)
+//{
+//  if (NULL == *pHead)
+//  {
+//      return;
+//  }
+//  else
+//  {
+//      //创建一个新的空链表，遍历pHead指向的链表里的所有节点，每找到一个，就前插到新链表里
+//      PSListNode pNewHead = *pHead;
+//      *pHead = (*pHead)->pNextNode;
+//      //第一次前插到新链表里的结点，是新链表的尾节点，所以要使它的下一个结点为空
+//      pNewHead->pNextNode = NULL;
+//      while (NULL != *pHead)
+//      {
+//          PSListNode pNode = *pHead;
+//          *pHead = (*pHead)->pNextNode;
+//          pNode->pNextNode = pNewHead;
+//          pNewHead = pNode;
+//      }
+//      *pHead = pNewHead;
+//  }
+//}
+//逆置链表：方法二：三指针法
+void ReverseList(PSListNode* pHead)
+{
+    assert(pHead);
+    if ((*pHead == NULL) || ((*pHead)->pNextNode) == NULL)
+    {
+        return;
+    }
+    else
+    {
+        PSListNode pPreNode = *pHead;
+        PSListNode pCurNode = (*pHead)->pNextNode;
+        PSListNode pOffNode = (*pHead)->pNextNode->pNextNode;
+        PSListNode pNode = NULL;
+        while (1)
+        {
+            pCurNode->pNextNode = pPreNode;
+            pPreNode->pNextNode = pNode;
+            pNode = pPreNode;
+            if (pOffNode == NULL)
+            {
+                break;
+            }
+            else
+            {
+                pPreNode = pCurNode;
+                pCurNode = pOffNode;
+                pOffNode = pOffNode->pNextNode;
+            }
+        }
+        *pHead = pCurNode;
+    }
+}
