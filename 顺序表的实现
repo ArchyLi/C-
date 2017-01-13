@@ -1,0 +1,446 @@
+#ifndef __seqlist_h__
+#define __seqlist_h__
+#pragma warning(disable:4996) 
+#include <stdio.h>
+#include <assert.h>
+#include <stdlib.h>
+#include <memory.h>
+typedef int DataType;
+#define MaxSize 2
+
+typedef struct SeqList
+{
+	DataType array[MaxSize];
+	int size;   // 有效数据元素的个数
+}SeqList, *pSeqlist;
+
+
+// 初始化顺序表
+void InitSeqList(SeqList* seq);
+// 在顺序表的尾部插入值为data的元素
+void PushBack(SeqList* pSeq, DataType _data);
+// 删除顺序表的最后一个元素
+void PopBack(SeqList* pSeq);
+// 在顺序表的头部插入值为data的元素
+void PushFront(SeqList* pSeq, DataType data);
+// 删除顺序表头部元素
+void PopFront(SeqList* pSeq);
+// 在顺序表中pos位置上插入值为data的元素
+void Insert(SeqList* pSeq, size_t pos, DataType data);
+// 删除顺序表中pos位置上的元素
+void Erase(SeqList* pSeq, size_t pos);
+// 在顺序表中查找值为data的元素，找到返回该元素的位置，否则返回-1
+int Find(SeqList* pSeq, DataType data);
+// 删除顺序表中第一个值为data的元素
+void Remove(SeqList* pSeq, DataType data);
+// 删除顺序表中所有值为data的元素
+void RemoveAll(SeqList* pSeq, DataType data);
+// 使用冒泡排序给顺序表中的元素排序
+void BubbleSort(SeqList* pSeq);
+// 使用选择排序给顺序表中的元素排序
+void SelectSort(SeqList* pSeq);
+// 使用二分查找在顺序表中查找值为data
+void BinarySearch(SeqList* pSeq, DataType data);
+//打印顺序表
+void PrintSeq(SeqList* pSeq);
+
+void menu();
+
+#endif
+
+
+
+#include "seqlist.h"
+void menu()
+{
+	printf("**********************************************\n");
+	printf("******    1. 初始化顺序表                *****\n");
+	printf("******    2. 头部插入元素                *****\n");
+	printf("******    3. 尾部插入元素                *****\n");
+	printf("******    4. 删除头部元素                *****\n");
+	printf("******    5. 删除最后元素                *****\n");
+	printf("******    6. pos位置上插入值元素         *****\n");
+	printf("******    7. 删除pos位置上的元素         *****\n");
+	printf("******    8. 查找元素                    *****\n");
+	printf("******    9. 删除第一个值为data的元素    *****\n");
+	printf("******    10.删除所有值为data的元素      *****\n");
+	printf("******    11.冒泡排序                    *****\n");
+	printf("******    12.选择排序                    *****\n");
+	printf("******    13.二分查找                    *****\n");
+	printf("******    14.打印顺序链表                *****\n");
+	printf("******    0. 退出程序                    *****\n");
+	printf("**********************************************\n");
+}
+void InitSeqList(SeqList* pseq)
+{
+	assert(pseq);
+	pseq->size = 0;
+	memset(pseq, 0, sizeof(pseq)*MaxSize);
+	printf("初始化完成！\n");
+}
+void PushBack(SeqList* pSeq, DataType _data)
+{
+	assert(pSeq);
+	assert(_data);
+	if (pSeq->size == MaxSize)
+	{
+		printf("此链表已满，不可插入！\n");
+		exit(EXIT_FAILURE);
+		//EXIT_FAILURE 可以作为exit()的参数来使用，表示没有成功地执行一个程序。
+		//EXIT_SUCCESS 作为exit()的参数来使用，表示成功地执行一个程序。
+		//stdlib.h
+	}
+	pSeq->array[pSeq->size] = _data;
+	pSeq->size ++;
+	printf("插入成功！\n");
+}
+void PopBack(SeqList* pSeq)
+{
+	assert(pSeq);
+	if (pSeq->size == 0)
+	{
+		printf("此链表已经为空不可删除！\n");
+		exit(EXIT_FAILURE);
+	}
+	pSeq->size--;
+	printf("链表删除成功！\n");
+}
+void PushFront(SeqList* pSeq, DataType data)
+{
+	int i = 0;
+	assert(pSeq);
+	assert(data);
+	if (pSeq->size == MaxSize)
+	{
+		printf("此链表已满，不可插入！\n");
+		exit(EXIT_FAILURE);
+	}
+	pSeq->size++;
+	for (i = 1; i <= pSeq->size; i++)
+	{
+		pSeq->array[pSeq->size] = pSeq->array[pSeq->size - 1];
+	}
+	pSeq->array[0] = data;
+	printf("头插成功！\n");
+}
+void PopFront(SeqList* pSeq)
+{
+	assert(pSeq);
+	int i = 0;
+	if (pSeq->size == 0)
+	{
+		printf("链表为空，无法删除！\n");
+		exit(EXIT_FAILURE);
+	}
+	for (i = 1; i <= pSeq->size ; i++)
+	{
+		pSeq->array[i-1] = pSeq->array[i];
+	}
+	pSeq->size--;
+	printf("头删完成！\n");
+}
+void Insert(SeqList* pSeq, size_t pos, DataType data)
+{
+	assert(pSeq);
+	assert(pos);
+	assert(data);
+	size_t i = 0;
+	int j = 0;
+	/*if (pos > pSeq->size)
+	{
+		printf("输入位置有错误！\n");
+		exit(EXIT_FAILURE);
+	}*/
+	if (pSeq->size == MaxSize || pos == MaxSize)
+	{
+		printf("顺序表已满或者插入位置不合理\n");
+		exit(EXIT_FAILURE);
+	}
+	for (i = pSeq->size - 1; i >= pos; i++)
+	{
+		pSeq->array[i + 1] = pSeq->array[i];
+	}
+	pSeq->array[pos] = data;
+	pSeq->size++;
+	printf("插入成功!\n");
+}
+void Erase(SeqList* pSeq, size_t pos)
+{
+	size_t i = 0;
+	assert(pSeq);
+	assert(pos);
+	/*if (pos > pSeq->size)
+	{
+		printf("输入有误！\n");
+		exit(EXIT_FAILURE);
+	}*/
+	for (i = pSeq->size; i >= pos; i--)
+	{
+		pSeq->array[i + 1] = pSeq->array[i];
+	}
+	pSeq->size--;
+	printf("删除成功！\n");
+}
+int Find(SeqList* pSeq, DataType data)
+{
+	int i = 0;
+	assert(pSeq);
+	assert(data);
+	for (i = 1; i < pSeq->size; i++)
+	{
+		if (pSeq->array[i] == data)
+			return i;
+	}
+	return -1;
+}
+void Remove(SeqList* pSeq, DataType data)
+{
+	assert(pSeq);
+	assert(data);
+	if (pSeq->size == 0)
+	{
+		printf("顺序表已空，不可删除");
+		exit(EXIT_FAILURE);
+	}
+	int i = 0;
+	int j = 0;
+	for (i = 0; i < pSeq->size; i++)
+	{
+		if (pSeq->array[i] == data)
+		break;
+	}
+	if (i == pSeq->size)
+	{
+		printf("要删除的元素不存在\n");
+		exit(EXIT_FAILURE);
+	}
+	for (j = i + 1; j < pSeq->size; j++)
+	{
+		pSeq->array[j - 1] = pSeq->array[j];
+	}
+	pSeq->size--;
+	printf("删除成功!\n");
+}
+void RemoveAll(SeqList* pSeq, DataType data) 
+{
+	int count = 0;
+	assert(pSeq);
+	assert(data);
+	if (pSeq->size == 0)
+	{
+		printf("顺序表已空，不可删除");
+		exit(EXIT_FAILURE);
+	}
+	int i = 0;
+	int j = pSeq->size - 1;
+	while (i < pSeq->size)
+	{
+		if (pSeq->array[i] == data)
+		{
+			while (pSeq->array[j] == data)
+			{
+				j--;
+			}
+			pSeq->array[i] = pSeq->array[j];
+			count++;
+		}
+		i++;
+	}
+	pSeq->size -= count;
+	printf("删除成功！\n");
+}
+void BubbleSort(SeqList* pSeq)
+{
+	int i = 0;
+	int j = 0;
+	int temp = 0;
+	int flag = 1;
+	assert(pSeq);
+	if (pSeq->size == 0)
+	{
+		printf("链表为空，无法排序！\n");
+		exit(EXIT_FAILURE);
+	}
+	for (i = 1; i < pSeq->size; i++)
+	{
+		flag = 1;
+		for (j = 0; j < pSeq->size - 1; j++)
+		{
+			if (pSeq->array[j]>pSeq->array[j + 1])
+			{
+				temp = pSeq->array[j];
+				pSeq->array[j] = pSeq->array[j + 1];
+				pSeq->array[j + 1] = temp;
+				flag = 0;
+			}
+		}
+		if (flag == 1)
+		{
+			break;
+		}
+	}
+	printf("排序成功！\n");
+	
+}
+void SelectSort(SeqList* pSeq)
+{
+	assert(pSeq);
+	int i = 0;
+	int j = 0;
+	if (pSeq->size == 0)
+	{
+		printf("链表为空，无法排序！\n");
+		exit(EXIT_FAILURE);
+	}
+	for (i = 0; i < pSeq->size-1; i++)
+	{
+		int min_index = i;
+		for (j = i + 1; j < pSeq->size; j++)
+		{
+			if (pSeq->array[j] < pSeq->array[min_index])
+			{
+				min_index = j;
+			}
+		}
+		if (i != min_index)
+		{
+			int temp = pSeq->array[i];
+			pSeq->array[i] = pSeq->array[min_index];
+			pSeq->array[min_index] = temp;
+		}
+	}
+	printf("排序成功！\n");
+}
+void BinarySearch(SeqList* pSeq, DataType data)
+{
+	assert(pSeq);
+	if (0 == pSeq->size)
+	{
+		printf("链表为空，无法查找\n");
+		exit(EXIT_FAILURE);
+	}
+	SelectSort(pSeq);
+	int left = 0;
+	int right = pSeq->size - 1;
+	int middle = 0;
+	while (left < right)
+	{
+		middle = (left + right) / 2;
+		if (data == pSeq->array[middle])
+		{
+			printf("找到了\n");
+			return;
+		}
+		else if (data < pSeq->array[middle])
+		{
+			right = middle - 1;
+		}
+		else
+		{
+			left = middle + 1;
+		}
+	}
+	printf("没有找到\n");
+}
+void PrintSeq(SeqList* pSeq)
+{
+	assert(pSeq);
+	int i = 0;
+	printf("顺序表中的元素有：\n");
+	for (i = 0; i < pSeq->size; i++)
+	{
+		printf("%d ", pSeq->array[i]);
+	}
+	printf("\n");
+}
+
+
+
+
+#include "seqlist.h"
+int main()
+{
+	SeqList	seq;
+	pSeqlist pSeq = &seq;
+	int x = 0;
+	int i = 1;
+	int pos = 0;
+	int ret = 0;
+	while (i)
+	{
+		menu();
+		printf("请输入相应序号：");
+		scanf("%d", &i);
+		switch (i)
+		{
+		case 1:
+			InitSeqList(pSeq);
+			break;
+		case 2:
+			printf("请输入要插入的数字：");
+			scanf("%d", &x);
+			PushFront(pSeq, x);
+			break;
+		case 3:
+			printf("请输入需要插入的数字：");
+			scanf("%d", &x);
+			PushBack(pSeq,  x);
+			break;
+		case 4:
+			PopFront(pSeq);
+			break;
+		case 5:
+			PopBack(pSeq);
+			break;
+		case 6:
+			printf("请输入插入位置：");
+			scanf("%d", &pos);
+			printf("\n");
+			printf("请输入插入数字：");
+			scanf("%d", &x);
+			printf("\n");
+			Insert(pSeq, pos, x);
+			break;
+		case 7:
+			Erase(pSeq, pos);
+			break;
+		case 8:
+			printf("请输入查找元素：");
+			scanf("%d", &pos);
+			ret=Find(pSeq, x);
+			if (ret != -1)
+			{
+				printf("找到了！\n");
+			}
+			printf("没找到！\n");
+			break;
+		case 9:
+			printf("请输入需要删除的数字：");
+			scanf("%d", &x);
+			Remove(pSeq, x);
+			break;
+		case 10:
+			printf("请输入需要删除的数字：");
+			scanf("%d", &x);
+			RemoveAll(pSeq, x);
+			break;
+		case 11:
+			BubbleSort(pSeq);
+			break;
+		case 12:
+			SelectSort(pSeq);
+			break;
+		case 13:
+			printf("请输入查找元素：");
+			scanf("%d", &x);
+			BinarySearch(pSeq, x);
+			break;
+		case 14:
+			break;
+		default:
+			break;
+		}	
+	}
+	system("pause");
+	return 0;
+}
