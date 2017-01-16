@@ -1,0 +1,220 @@
+//SlistNode.h
+#pragma once
+#define _CRT_SECURE_NO_WARNINGS 1
+#include <stdio.h>
+#include <stdlib.h>
+#include <Windows.h>
+#include <assert.h>
+typedef int Datatype;
+typedef struct SlistNode
+{
+    Datatype data;
+    struct SlistNode* next;
+}SlistNode;
+void InitSlist(SlistNode*& pHead);//初始化
+void PrintList(SlistNode*& pHead);//打印
+void PushBack(SlistNode*& pHead,Datatype a);//尾插
+void PopBack(SlistNode*& pHead);//尾删
+void PushFront(SlistNode*& pHead, Datatype a);//头插
+void PopFront(SlistNode*& pHead);//头删
+void Insert(SlistNode*& pHead, SlistNode*& pos, Datatype a);//指定位置插入
+void Erase(SlistNode*& pHead, SlistNode*& pos);//删除指定位置数据
+void Remove(SlistNode*& pHead,Datatype a);//删除指定数
+SlistNode* Find(SlistNode* pHead, Datatype a);//查找
+void Destory(SlistNode*& pHead);//销毁
+SlistNode* BuyNode(Datatype a);//申请节点
+
+
+//SlistNode.cpp
+#include "SlistNode.h"
+void InitSlist(SlistNode*& pHead)
+{
+    pHead = NULL;
+}
+void PrintList(SlistNode*& pHead)
+{
+    SlistNode* temp = pHead;
+    if (temp == NULL)
+    {
+        return;
+    }
+    while (temp)
+    {
+        printf("%d ", temp->data);
+        temp = temp->next;
+    }
+    printf("\n");
+}
+SlistNode* BuyNode(Datatype a)
+{
+    SlistNode* node = (SlistNode*)malloc(sizeof(SlistNode));
+    assert(node);
+    node->data = a;
+    node->next = NULL;
+    return node;
+}
+void PushBack(SlistNode*& pHead, Datatype a)
+{
+
+    if (pHead == NULL)
+    {
+        pHead = BuyNode(a);
+    }
+    else
+    {
+        SlistNode* pcur = pHead;
+        while (pcur->next)
+        {
+            pcur = pcur->next;
+        }
+        pcur->next = BuyNode(a);
+    }
+
+}
+void PopBack(SlistNode*& pHead)
+{
+    assert(pHead);
+    if (pHead->next == NULL)
+    {
+        free(pHead);
+        pHead = NULL;
+    }
+    else
+    {
+        SlistNode* pcur = pHead;
+        SlistNode* pre = pcur;
+        while (pcur->next)
+        {
+            pre = pcur;
+            pcur = pcur->next;
+        }
+        free(pcur);
+        pcur = NULL;
+        pre->next = NULL;
+    }
+}
+void PushFront(SlistNode*& pHead, Datatype a)
+{
+    assert(pHead);
+    if (pHead == NULL)
+    {
+        pHead = BuyNode(a);
+    }
+    else
+    {
+        SlistNode* newnode = BuyNode(a);
+        newnode->next = pHead;
+        pHead = newnode;
+    }
+}
+void PopFront(SlistNode*& pHead)
+{
+    assert(pHead);
+    if (pHead == NULL)
+    {
+        return;
+    }
+    else if (pHead->next==NULL)
+    {
+        free(pHead);
+        pHead = NULL;
+    }
+    else
+    {
+
+        SlistNode* pcur = pHead;
+        pHead = pHead->next;
+        free(pcur);
+        pcur = NULL;
+    }
+}
+void Insert(SlistNode*& pHead, SlistNode*& pos, Datatype a)//在pos之前插入数据
+{
+    assert(pHead);
+    assert(pos);
+    if (pHead == pos)
+    {
+        SlistNode* newnode = BuyNode(a);
+        newnode->next = pHead;
+        pHead = newnode;
+    }
+    else
+    {
+        SlistNode* pcur = pHead;
+        SlistNode* pre = pcur;
+        while (pcur != pos)
+        {
+            pre = pcur;
+            pcur = pcur->next;
+        }
+        SlistNode* newnode = BuyNode(a);
+        newnode->next = pcur;
+        pre->next = newnode;
+    }
+}
+SlistNode* Find(SlistNode* pHead, Datatype a)
+{
+    assert(pHead);
+    SlistNode* temp = pHead;
+    while (temp)
+    {
+        if (temp->data == a)
+        {
+            return temp;
+        }
+        temp = temp->next;
+    }
+    return NULL;
+}
+void Erase(SlistNode*& pHead, SlistNode*& pos)
+{
+    assert(pHead&&pos);
+    if (pos == pHead)
+    {
+        SlistNode* temp = pHead;
+        pHead = pHead->next;
+        free(temp);
+        temp = NULL;
+    }
+    else
+    {
+        SlistNode* pcur = pHead;
+        while (pcur->next != pos)
+        {
+            pcur = pcur->next;
+        }
+        pcur->next = pos->next;
+        free(pos);
+        pos = NULL;
+    }
+}
+void Remove(SlistNode*& pHead, Datatype a)
+{
+    assert(pHead);
+    SlistNode* pos = Find(pHead, a);
+    if (pos == pHead)
+    {
+        SlistNode* temp = pHead;
+        pHead = pHead->next;
+        free(temp);
+        temp = NULL;
+    }
+    else
+    {
+        SlistNode* pcur = pHead;
+        while (pcur->next != ``
+os)
+        {
+            pcur = pcur->next;
+        }
+        pcur->next = pos->next;
+        free(pos);
+        pos = NULL;
+    }
+}
+void Destory(SlistNode*& pHead)
+{
+    assert(pHead);
+    free(pHead);
+    pHead = NULL;
+}
